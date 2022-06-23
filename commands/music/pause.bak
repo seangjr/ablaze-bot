@@ -1,0 +1,43 @@
+const Discord = require("discord.js");
+
+module.exports = {
+    name: "pause",
+    description: "Pause the music",
+    aliases: ["p"],
+    execute(message, args, client, profileData) {
+        const queue = client.distube.getQueue(message);
+        if (!queue)
+            return message.channel.send(
+                new Discord.MessageEmbed()
+                    .setColor("RED")
+                    .setAuthor(
+                        client.user.username,
+                        client.user.displayAvatarURL(),
+                    )
+                    .setDescription(
+                        `${client.emotes.error} There is nothing in the queue right now!`,
+                    ),
+            );
+        if (queue.pause) {
+            client.distube.resume(message);
+            return message.channel.send(
+                new Discord.MessageEmbed()
+                    .setColor("GREEN")
+                    .setAuthor(
+                        client.user.username,
+                        client.user.displayAvatarURL(),
+                    )
+                    .setDescription(
+                        `${client.emotes.success} Resumed the music!`,
+                    ),
+            );
+        }
+        client.distube.pause(message);
+        message.channel.send(
+            new Discord.MessageEmbed()
+                .setColor("GREEN")
+                .setAuthor(client.user.username, client.user.displayAvatarURL())
+                .setDescription(`${client.emotes.success} Paused the music!`),
+        );
+    },
+};

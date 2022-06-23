@@ -1,0 +1,44 @@
+const Discord = require("discord.js");
+
+module.exports = {
+    name: "repeat",
+    description: "Repeat the current song or queue",
+    aliases: ["r", "loop"],
+    execute(message, args, client, profileData) {
+        const queue = client.distube.getQueue(message);
+        if (!queue)
+            return message.channel.send(
+                new Discord.MessageEmbed()
+                    .setColor("RED")
+                    .setAuthor(
+                        client.user.username,
+                        client.user.displayAvatarURL(),
+                    )
+                    .setDescription(
+                        `${client.emotes.error} There is nothing in the queue right now!`,
+                    ),
+            );
+        let mode = null;
+        switch (args[0]) {
+            case "off":
+                mode = 0;
+                break;
+            case "song":
+                mode = 1;
+                break;
+            case "queue":
+                mode = 2;
+                break;
+        }
+        mode = client.distube.setRepeatMode(message, mode);
+        mode = mode ? (mode === 2 ? "Repeat queue" : "Repeat song") : "Off";
+        message.channel.send(
+            new Discord.MessageEmbed()
+                .setColor("GREEN")
+                .setAuthor(client.user.username, client.user.displayAvatarURL())
+                .setDescription(
+                    `${client.emotes.repeat} Set repeat mode to ${mode}!`,
+                ),
+        );
+    },
+};
